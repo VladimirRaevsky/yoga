@@ -39,5 +39,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     tabsWrapper('.info-header', '.info-header-tab', '.info-tabcontent');
 
+        
+    //    countdown timer 
+
+    const deadline = '2021-02-27';
+
+    function getTimeRemaining(endtime) {
+        let t = Date.parse(endtime) - Date.parse(new Date());
+
+        let seconds = Math.floor((t / 1000) % 60);
+        let minutes = Math.floor((t / 1000 / 60) % 60 );
+        let hours = Math.floor((t / (1000 * 60 * 60)));
+
+        return {
+            'total': t,
+            'seconds': seconds,
+            'minutes': minutes,
+            'hours': hours
+        };
+    }
+    
+
+    function setClock(id, endtime) {
+        const timer = document.getElementById(id);
+        let hours = timer.querySelector('.hours');
+        let minutes = timer.querySelector('.minutes');
+        let seconds = timer.querySelector('.seconds');
+        let timerInterval = setInterval(updateClock, 1000);
+
+        function updateClock() {
+            let t = getTimeRemaining(endtime);
+            hours.textContent = addZero(t.hours);
+            minutes.textContent = addZero(t.minutes);
+            seconds.textContent = addZero(t.seconds);
+
+            if(t.total <= 0) {
+                clearInterval(timerInterval);
+                hours.textContent = '00';
+                minutes.textContent = '00';
+                seconds.textContent = '00';
+            }
+
+            function addZero(num){
+                if(num <= 9) {
+                    return `0${num}`;
+                } else {
+                    return num;
+                }
+                
+            }
+            
+        }
+        
+    }
+    setClock('timer', deadline);
 });
 

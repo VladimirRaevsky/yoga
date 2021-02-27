@@ -42,39 +42,45 @@ document.addEventListener('DOMContentLoaded', () => {
         
     //    countdown timer 
 
-    const deadline = '2021-02-27';
+    const deadline = '2021-06-27';
 
     function getTimeRemaining(endtime) {
         let t = Date.parse(endtime) - Date.parse(new Date());
 
         let seconds = Math.floor((t / 1000) % 60);
         let minutes = Math.floor((t / 1000 / 60) % 60 );
-        let hours = Math.floor((t / (1000 * 60 * 60)));
+        let hours = Math.floor((t / (1000 * 60 * 60) % 24));
+        let days = Math.floor(t / (1000 * 60 * 60 * 24));
 
         return {
             'total': t,
             'seconds': seconds,
             'minutes': minutes,
-            'hours': hours
+            'hours': hours,
+            'days': days
         };
     }
     
 
     function setClock(id, endtime) {
         const timer = document.getElementById(id);
+        let days = timer.querySelector('.days');
         let hours = timer.querySelector('.hours');
         let minutes = timer.querySelector('.minutes');
         let seconds = timer.querySelector('.seconds');
         let timerInterval = setInterval(updateClock, 1000);
 
+        updateClock();
         function updateClock() {
             let t = getTimeRemaining(endtime);
+            days.textContent = addZero(t.days);
             hours.textContent = addZero(t.hours);
             minutes.textContent = addZero(t.minutes);
             seconds.textContent = addZero(t.seconds);
 
             if(t.total <= 0) {
                 clearInterval(timerInterval);
+                days.textContent = '00';
                 hours.textContent = '00';
                 minutes.textContent = '00';
                 seconds.textContent = '00';
@@ -90,8 +96,59 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
         }
-        
     }
     setClock('timer', deadline);
+
+
+
+    class Options {
+        constructor(height, width, bg, fontSize, textAlign) {
+            this.height = height;
+            this.width = width;
+            this.bg = bg;
+            this.fontSize = fontSize;
+            this.textAlign = textAlign;
+        }
+        createDiv() {
+            let elem = document.createElement('div');
+            document.body.appendChild(elem);
+            let param = `height:${this.height}px; width:${this.width}px; background-color:${this.bg}; font-size:${this.fontSize}px; text-align:${this.textAlign}`;
+		    elem.style.cssText = param;
+        }  
+    }
+
+    const item = new Options(300, 350, "red", 14, "center");
+    item.createDiv();
+   
+    
+
+
+    // modal
+
+    const more = document.querySelector('.more');
+    const overlay = document.querySelector('.overlay');
+    const close = document.querySelector('.popup-close');
+    const descrBtn = document.querySelectorAll('.description-btn');
+
+
+    function showPopup() {
+        overlay.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    
+    function closePopup(event) {
+        overlay.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    more.addEventListener('click', showPopup);
+    close.addEventListener('click', closePopup);
+    descrBtn.forEach(btn => {
+        btn.addEventListener('click', showPopup);
+    });
 });
+
+
+
 

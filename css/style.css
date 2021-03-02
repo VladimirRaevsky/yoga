@@ -727,3 +727,9 @@ header ul li:before {
   opacity: 1;
   z-index: 0;
 }
+
+.message {
+  color: red;
+  font-size: 20px;
+  margin-top: 10px;
+}

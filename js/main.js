@@ -101,24 +101,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    class Options {
-        constructor(height, width, bg, fontSize, textAlign) {
-            this.height = height;
-            this.width = width;
-            this.bg = bg;
-            this.fontSize = fontSize;
-            this.textAlign = textAlign;
-        }
-        createDiv() {
-            let elem = document.createElement('div');
-            document.body.appendChild(elem);
-            let param = `height:${this.height}px; width:${this.width}px; background-color:${this.bg}; font-size:${this.fontSize}px; text-align:${this.textAlign}`;
-		    elem.style.cssText = param;
-        }  
-    }
+    // class Options {
+    //     constructor(height, width, bg, fontSize, textAlign) {
+    //         this.height = height;
+    //         this.width = width;
+    //         this.bg = bg;
+    //         this.fontSize = fontSize;
+    //         this.textAlign = textAlign;
+    //     }
+    //     createDiv() {
+    //         let elem = document.createElement('div');
+    //         document.body.appendChild(elem);
+    //         let param = `height:${this.height}px; width:${this.width}px; background-color:${this.bg}; font-size:${this.fontSize}px; text-align:${this.textAlign}`;
+	// 	    elem.style.cssText = param;
+    //     }  
+    // }
 
-    const item = new Options(300, 350, "red", 14, "center");
-    item.createDiv();
+    // const item = new Options(300, 350, "red", 14, "center");
+    // item.createDiv();
    
     
 
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     
-    function closePopup(event) {
+    function closePopup() {
         overlay.style.display = 'none';
         document.body.style.overflow = '';
     }
@@ -147,6 +147,64 @@ document.addEventListener('DOMContentLoaded', () => {
     descrBtn.forEach(btn => {
         btn.addEventListener('click', showPopup);
     });
+
+
+    // form
+
+    const form = document.querySelector('.main-form');
+    let input = form.getElementsByTagName('input');
+    let Message = document.createElement('div');
+        
+    Message.classList.add('message');
+    
+    
+    let message = {
+        loading: 'Загрузка...',
+        success: 'Спасибо! Скоро мы с вами свяжемся!',
+        failure: 'Что-то пошло не так...'
+    };
+
+    
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        form.appendChild(Message);
+
+        let request = new XMLHttpRequest();
+        request.open('POST', 'server.php');
+        request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+
+        let formData = new FormData(form);
+
+        let obj = {};
+        formData.forEach(function(value, key) {
+            obj[key] = value;
+        });
+        let json = JSON.stringify(obj);
+
+        request.send(json);
+
+        request.addEventListener('readystatechange', function() {
+            if (request.readyState < 4) {
+                Message.innerHTML = message.loading;
+            } else if(request.readyState === 4 && request.status == 200) {
+                Message.innerHTML = message.success;
+                setTimeout(closePopup , 3000);
+                setTimeout(zeroMessage, 3000);
+            } else {
+                Message.innerHTML = message.failure;
+                setTimeout(closePopup , 3000);
+                setTimeout(zeroMessage, 3000);
+            }
+        });
+
+        for (let i = 0; i < input.length; i++) {
+            input[i].value = '';
+        }
+    });
+    function zeroMessage() {
+        Message.innerHTML = '';
+    }
+    zeroMessage(Message);
 });
 
 
